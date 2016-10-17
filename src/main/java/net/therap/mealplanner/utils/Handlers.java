@@ -25,9 +25,16 @@ public class Handlers {
             System.out.println("Press 3 to update a Meal");
             System.out.println("Press 4 to delete a Meal");
             System.out.println("Press 5 to exit");
-            System.out.println("Please choose and option:");
+            System.out.println("Please choose an option:");
             System.out.println("============================");
-            int userInput = Integer.parseInt(scanner.nextLine());
+            int userInput = 0;
+            try{
+                userInput = Integer.parseInt(scanner.nextLine());
+            }catch (NumberFormatException ne){
+                System.out.println("Invalid Input Try Again");
+                continue;
+            }
+
             Meal meal = null;
             boolean status = false;
             switch (userInput) {
@@ -62,7 +69,7 @@ public class Handlers {
                     }
                     break;
                 case 5:
-                    System.exit(1);
+                    System.exit(0);
                 default:
                     System.out.println("Unknown option please try again");
             }
