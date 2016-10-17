@@ -1,4 +1,4 @@
-package net.therap.mealplanner.DAO;
+package net.therap.mealplanner.dao;
 
 import net.therap.mealplanner.ConnectionManager.MysqlConnector;
 import net.therap.mealplanner.entity.Meal;

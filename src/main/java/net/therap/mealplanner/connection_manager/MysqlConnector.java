@@ -1,4 +1,4 @@
-package net.therap.mealplanner.ConnectionManager;
+package net.therap.mealplanner.connection_manager;
 
 import java.sql.*;
 
