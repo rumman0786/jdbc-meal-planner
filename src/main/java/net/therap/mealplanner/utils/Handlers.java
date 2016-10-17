@@ -28,9 +28,9 @@ public class Handlers {
             System.out.println("Please choose an option:");
             System.out.println("============================");
             int userInput = 0;
-            try{
+            try {
                 userInput = Integer.parseInt(scanner.nextLine());
-            }catch (NumberFormatException ne){
+            } catch (NumberFormatException ne) {
                 System.out.println("Invalid Input Try Again");
                 continue;
             }

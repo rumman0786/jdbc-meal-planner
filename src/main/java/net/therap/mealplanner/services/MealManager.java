@@ -12,26 +12,26 @@ import java.util.List;
  */
 public class MealManager {
 
-    public boolean addMealToMenu(Meal meal){
+    public boolean addMealToMenu(Meal meal) {
         MealDao mealDao = new MealDaoImpl();
         return mealDao.insertMeal(meal);
     }
 
-    public boolean updateMealInMenu(Meal meal){
+    public boolean updateMealInMenu(Meal meal) {
         MealDao mealDao = new MealDaoImpl();
         return mealDao.updateMeal(meal);
     }
 
-    public boolean deleteMealFromMenu(Meal meal){
+    public boolean deleteMealFromMenu(Meal meal) {
         MealDao mealDao = new MealDaoImpl();
         return mealDao.deleteMeal(meal);
     }
 
-    public void printMeals(){
+    public void printMeals() {
         MealDao mealDao = new MealDaoImpl();
         List<Meal> mealList = mealDao.findAll();
         System.out.println("Current Meals are:\n");
-        for (Meal meal : mealList){
+        for (Meal meal : mealList) {
             System.out.println(meal);
         }
     }
