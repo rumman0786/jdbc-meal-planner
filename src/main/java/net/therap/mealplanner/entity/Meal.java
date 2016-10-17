@@ -1,5 +1,7 @@
 package net.therap.mealplanner.entity;
 
+import java.util.Set;
+
 /**
  * @author rumman
  * @since 10/16/16
@@ -7,14 +9,17 @@ package net.therap.mealplanner.entity;
 public class Meal {
 
     private int id;
-    private String mealType;
     private String name;
-    private String calories;
+    // Type of menu this meal is i.e. breakfast of lunch
+    private MenuType menuType;
+    // Dishes that belong to this meal
+    private Set<Dish> dishSet;
+    // Days when this meal is available
+    private Set<Day> daySet;
 
-    public Meal(String mealType, String name, String calories) {
-        this.mealType = mealType;
+    public Meal(MenuType menuType, String name) {
+        this.menuType = menuType;
         this.name = name;
-        this.calories = calories;
     }
 
     public int getId() {
@@ -25,12 +30,12 @@ public class Meal {
         this.id = id;
     }
 
-    public String getMealType() {
-        return mealType;
+    public MenuType getMenuType() {
+        return menuType;
     }
 
-    public void setMealType(String mealType) {
-        this.mealType = mealType;
+    public void setMenuType(MenuType menuType) {
+        this.menuType = menuType;
     }
 
     public String getName() {
@@ -39,14 +44,6 @@ public class Meal {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCalories() {
-        return calories;
-    }
-
-    public void setCalories(String calories) {
-        this.calories = calories;
     }
 
     @Override
@@ -61,6 +58,22 @@ public class Meal {
         return isEqual;
     }
 
+    public Set<Dish> getDishSet() {
+        return dishSet;
+    }
+
+    public void setDishSet(Set<Dish> dishSet) {
+        this.dishSet = dishSet;
+    }
+
+    public Set<Day> getDaySet() {
+        return daySet;
+    }
+
+    public void setDaySet(Set<Day> daySet) {
+        this.daySet = daySet;
+    }
+
     @Override
     public int hashCode() {
         return this.getName().toLowerCase().hashCode() * 17;
@@ -69,8 +82,7 @@ public class Meal {
     @Override
     public String toString() {
         return "id=" + id +
-                ", mealType='" + mealType + '\'' +
-                ", name='" + name + '\'' +
-                ", calories='" + calories + '\'';
+                ", mealType='" + menuType + '\'' +
+                ", name='" + name + '\'';
     }
 }
