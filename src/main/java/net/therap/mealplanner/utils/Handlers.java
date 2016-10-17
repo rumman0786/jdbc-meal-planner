@@ -2,6 +2,7 @@ package net.therap.mealplanner.utils;
 
 import net.therap.mealplanner.DAO.MealDaoImpl;
 import net.therap.mealplanner.entity.Meal;
+import net.therap.mealplanner.services.MealManager;
 
 import java.util.List;
 import java.util.Scanner;
@@ -13,6 +14,60 @@ import java.util.Scanner;
 public class Handlers {
     public static final String LUNCH = "lunch";
     public static final String BREAKFAST = "breakfast";
+
+    public void startApp() {
+        MealManager manager = new MealManager();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nPress 1 to show current Meals");
+            System.out.println("Press 2 to add a Meal");
+            System.out.println("Press 3 to update a Meal");
+            System.out.println("Press 4 to delete a Meal");
+            System.out.println("Press 5 to exit");
+            System.out.println("Please choose and option:");
+            System.out.println("============================");
+            int userInput = Integer.parseInt(scanner.nextLine());
+            Meal meal = null;
+            boolean status = false;
+            switch (userInput) {
+                case 1:
+                    manager.printMeals();
+                    break;
+                case 2:
+                    meal = getMealFromUser();
+                    status = manager.addMealToMenu(meal);
+                    if (status) {
+                        System.out.println("Meal Added");
+                    } else {
+                        System.out.println("Meal with that name already exists, Try Again");
+                    }
+                    break;
+                case 3:
+                    meal = getUpdatedMeal();
+                    status = manager.updateMealInMenu(meal);
+                    if (status) {
+                        System.out.println("Meal Updated");
+                    } else {
+                        System.out.println("Meal not Updated, Try Again");
+                    }
+                    break;
+                case 4:
+                    meal = getMealToBeDeleted();
+                    status = manager.deleteMealFromMenu(meal);
+                    if (status) {
+                        System.out.println("Meal Deleted");
+                    } else {
+                        System.out.println("Meal not Deleted, Try Again");
+                    }
+                    break;
+                case 5:
+                    System.exit(1);
+                default:
+                    System.out.println("Unknown option please try again");
+            }
+        }
+    }
 
     public Meal getMealFromUser() {
         Scanner scanner = new Scanner(System.in);
@@ -46,9 +101,9 @@ public class Handlers {
             }
             System.out.println(loopMeal);
         }
-        if (!isMealAvailable){
+        if (!isMealAvailable) {
             System.out.println("No Meal exists with that id.");
-        }else{
+        } else {
             System.out.println("Please enter updated meal name:\n");
             String name = scanner.nextLine();
             System.out.println("Please enter updated calories that meal contains:\n");
