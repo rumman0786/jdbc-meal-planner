@@ -1,0 +1,11 @@
+apply plugin: 'java'
+apply plugin: 'application'
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtime group: 'mysql', name: 'mysql-connector-java', version: '5.1.21'
+
+}
+mainClassName = "net/therap/mealplanner/app/Main"
