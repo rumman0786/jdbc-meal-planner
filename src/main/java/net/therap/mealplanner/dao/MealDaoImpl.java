@@ -85,14 +85,21 @@ public class MealDaoImpl implements MealDao {
 
             try {
                 dbConnection = MysqlConnector.getMysqlConnection();
-                preparedStatement = dbConnection.prepareStatement(insertTableSQL);
+                preparedStatement = dbConnection.prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
 //                System.out.println(String.valueOf(meal.getMenuType().getId()));
                 System.out.println(meal);
                 preparedStatement.setString(1, meal.getName());
                 preparedStatement.setString(2, meal.getDay());
                 preparedStatement.setString(3, String.valueOf(meal.getMenuType().getId()));
+                preparedStatement.executeUpdate();
                 // execute insert SQL stetement
-                int insertionId = preparedStatement.executeUpdate();
+
+                int insertionId = -1;
+                ResultSet rs = preparedStatement.getGeneratedKeys();
+                if(rs.next())
+                {
+                    insertionId= rs.getInt(1);
+                }
                 insertMealDishMap(insertionId, meal.getDishSet());
                 return true;
 
@@ -124,16 +131,19 @@ public class MealDaoImpl implements MealDao {
         if (!mealList.contains(meal)){
             Connection dbConnection = null;
             PreparedStatement preparedStatement = null;
-
-            String insertTableSQL = "UPDATE `mealplanner`.`Meal` SET `name` = ?,`calories` = ?, `meal_type` = ? WHERE `id`=?;";
+            System.out.println("Here");
+            System.out.println(meal.getDishSet());
+            updateMealDishMap(meal.getId(), meal.getDishSet());
+            System.out.println("Here as well");
+            String insertTableSQL = "UPDATE meal SET name = ?,day = ?, menu_type_id = ? WHERE  id =?; ";
 
             try {
                 dbConnection = MysqlConnector.getMysqlConnection();
                 preparedStatement = dbConnection.prepareStatement(insertTableSQL);
 
                 preparedStatement.setString(1, meal.getName());
-//                preparedStatement.setString(2, meal.getCalories());
-//                preparedStatement.setString(3, meal.getMealType());
+                preparedStatement.setString(2, meal.getDay());
+                preparedStatement.setString(3, String.valueOf(meal.getMenuType().getId()));
                 preparedStatement.setString(4, String.valueOf(meal.getId()));
                 // execute insert SQL stetement
                 preparedStatement.executeUpdate();
@@ -163,38 +173,35 @@ public class MealDaoImpl implements MealDao {
 
     @Override
     public boolean deleteMeal(Meal meal) {
-        List<Meal> mealList = findAll();
-        if (mealList.contains(meal)){
-            Statement stmt = null;
-            Connection dbConnection = MysqlConnector.getMysqlConnection();
-            PreparedStatement preparedStatement = null;
+        Statement stmt = null;
+        Connection dbConnection = MysqlConnector.getMysqlConnection();
+        PreparedStatement preparedStatement = null;
 
-            String deleteSQL = "DELETE FROM `mealplanner`.`Meal` WHERE `id` = ?";
+        deleteMealDishMap(meal.getId());
+        String deleteSQL = "DELETE FROM meal WHERE id = ?";
+        try {
+            preparedStatement = dbConnection.prepareStatement(deleteSQL);
+            preparedStatement.setInt(1, meal.getId());
+            // execute delete SQL stetement
+            preparedStatement.executeUpdate();
 
+            System.out.println("Record is deleted!");
+            return true;
+        } catch (SQLException e) {
+
+            System.out.println(e.getMessage());
+
+        } finally {
             try {
-                preparedStatement = dbConnection.prepareStatement(deleteSQL);
-//                preparedStatement.setInt(1, meal.getId());
-                // execute delete SQL stetement
-                preparedStatement.executeUpdate();
-
-                System.out.println("Record is deleted!");
-                return true;
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-
-            } finally {
-                try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
-                    }
-
-                    if (dbConnection != null) {
-                        dbConnection.close();
-                    }
-                } catch (SQLException sqlException){
-                    sqlException.printStackTrace();
+                if (preparedStatement != null) {
+                    preparedStatement.close();
                 }
+
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+            } catch (SQLException sqlException){
+                sqlException.printStackTrace();
             }
         }
         return false;
@@ -279,5 +286,76 @@ public class MealDaoImpl implements MealDao {
             }
         }
         return dishSet;
+    }
+
+    public boolean deleteMealDishMap(int mealId) {
+
+        Statement stmt = null;
+        Connection dbConnection = MysqlConnector.getMysqlConnection();
+        PreparedStatement preparedStatement = null;
+
+        String deleteSQL = "DELETE FROM meal_dish_map WHERE meal_id = ?";
+
+        try {
+            preparedStatement = dbConnection.prepareStatement(deleteSQL);
+            preparedStatement.setInt(1, mealId);
+            // execute delete SQL stetement
+            preparedStatement.executeUpdate();
+
+            System.out.println("Meal Dish Maps deleted!");
+            return true;
+        } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            } finally {
+                try {
+                    if (preparedStatement != null) {
+                        preparedStatement.close();
+                    }
+
+                    if (dbConnection != null) {
+                        dbConnection.close();
+                    }
+                } catch (SQLException sqlException){
+                    sqlException.printStackTrace();
+                }
+            }
+
+        return false;
+    }
+
+    public boolean updateMealDishMap(int mealId, Set<Dish> dishSet) {
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+
+        String insertTableSQL = "UPDATE meal_dish_map SET dish_id = ? WHERE meal_id = ?; ";
+
+        try {
+            dbConnection = MysqlConnector.getMysqlConnection();
+            preparedStatement = dbConnection.prepareStatement(insertTableSQL);
+            for (Dish dish: dishSet){
+                preparedStatement.setString(1, String.valueOf(dish.getId()));
+                preparedStatement.setString(2, String.valueOf(mealId));
+                preparedStatement.executeUpdate();
+            }
+            return true;
+
+        } catch (SQLException e) {
+
+            System.out.println(e.getMessage());
+
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+            } catch (SQLException sqlException){
+                sqlException.printStackTrace();
+            }
+        }
+        return false;
     }
 }

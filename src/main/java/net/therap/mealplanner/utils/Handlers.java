@@ -124,17 +124,12 @@ public class Handlers {
     public Meal getMealFromUser() {
         Scanner scanner = new Scanner(System.in);
         DishManager dishManager = new DishManager();
-        dishManager.printDishes();
         Set<Dish> dishSet = getDishSet();
         System.out.println("Please Enter a meal name:\n");
         String name = scanner.nextLine();
 //        improve later
         System.out.println("Please Enter a day name:\n");
         String day = scanner.nextLine();
-//        System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
-//        String typeNum = scanner.nextLine();
-//        String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
-//        Meal meal = new Meal(new MenuType(type), name);
 
         MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
         System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
@@ -172,14 +167,19 @@ public class Handlers {
         } else {
             System.out.println("Please enter updated meal name:\n");
             String name = scanner.nextLine();
-            System.out.println("Please enter updated calories that meal contains:\n");
-            String calories = scanner.nextLine();
+            System.out.println("Please Enter updated day name:\n");
+            String day = scanner.nextLine();
+            MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
             System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
             String typeNum = scanner.nextLine();
             String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
+            MenuType menuType = menuTypeDao.getMenuType(type);
+            Set<Dish> dishSet = getDishSet();
+
             mealTobeUpdated.setName(name);
-//            mealTobeUpdated.setCalories(calories);
-//            mealTobeUpdated.setMealType(type);
+            mealTobeUpdated.setDay(day);
+            mealTobeUpdated.setMenuType(menuType);
+            mealTobeUpdated.setDishSet(dishSet);
         }
         return mealTobeUpdated;
     }
