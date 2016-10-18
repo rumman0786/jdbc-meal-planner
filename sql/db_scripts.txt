@@ -1,0 +1,30 @@
+CREATE TABLE `dish` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `calories` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `menu_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `meal` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `day` varchar(45) NOT NULL,
+  `menu_type_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`menu_type_id`) REFERENCES `menu_type` (`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `meal_dish_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `meal_id` int(11) DEFAULT NULL,
+  `dish_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`meal_id`) REFERENCES `meal` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`dish_id`) REFERENCES `dish` (`id`) ON DELETE CASCADE
+);
