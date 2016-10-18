@@ -11,26 +11,8 @@ import java.util.List;
  * @author rumman
  * @since 10/16/16
  */
-public class DishDaoImpl implements DishDao{
-//    public static void main(String[] args) {
-//        DishDaoImpl dishDao = new DishDaoImpl();
-//
-//        List<Dish> dishList = dishDao.findAll();
-//        for (Dish dish: dishList) {
-//            System.out.println(dish);
-//        }
-//        System.out.printf("##########");
-//        Dish dish = new Dish("Mach", "500");
-//        dish.setId(1);
-////        dishDao.deleteDish(dish);
-//        dishDao.updateDish(dish);
-//
-//        dishList = dishDao.findAll();
-//        for (Dish disha: dishList) {
-//            System.out.println(disha);
-//        }
-//
-//    }
+public class DishDaoImpl implements DishDao {
+
     @Override
     public List<Dish> findAll() {
         List<Dish> dishList = new ArrayList<Dish>();
@@ -86,7 +68,7 @@ public class DishDaoImpl implements DishDao{
     @Override
     public boolean insertDish(Dish dish) {
         List<Dish> dishList = findAll();
-        if (!dishList.contains(dish)){
+        if (!dishList.contains(dish)) {
             Connection dbConnection = null;
             PreparedStatement preparedStatement = null;
 
@@ -116,7 +98,7 @@ public class DishDaoImpl implements DishDao{
                     if (dbConnection != null) {
                         dbConnection.close();
                     }
-                } catch (SQLException sqlException){
+                } catch (SQLException sqlException) {
                     sqlException.printStackTrace();
                 }
             }
@@ -127,7 +109,7 @@ public class DishDaoImpl implements DishDao{
     @Override
     public boolean deleteDish(Dish dish) {
         List<Dish> dishList = findAll();
-        if (dishList.contains(dish)){
+        if (dishList.contains(dish)) {
             Statement stmt = null;
             Connection dbConnection = MysqlConnector.getMysqlConnection();
             PreparedStatement preparedStatement = null;
@@ -155,7 +137,7 @@ public class DishDaoImpl implements DishDao{
                     if (dbConnection != null) {
                         dbConnection.close();
                     }
-                } catch (SQLException sqlException){
+                } catch (SQLException sqlException) {
                     sqlException.printStackTrace();
                 }
             }
@@ -167,7 +149,7 @@ public class DishDaoImpl implements DishDao{
     public boolean updateDish(Dish dish) {
 
         List<Dish> dishList = findAll();
-        if (dishList.contains(dish)){
+        if (dishList.contains(dish)) {
             Connection dbConnection = null;
             PreparedStatement preparedStatement = null;
             String insertTableSQL = "UPDATE dish SET name = ?,calories = ? WHERE id = ? ;";
@@ -197,7 +179,7 @@ public class DishDaoImpl implements DishDao{
                     if (dbConnection != null) {
                         dbConnection.close();
                     }
-                } catch (SQLException sqlException){
+                } catch (SQLException sqlException) {
                     sqlException.printStackTrace();
                 }
             }

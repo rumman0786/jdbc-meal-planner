@@ -205,11 +205,6 @@ public class Handlers {
         String name = scanner.nextLine();
         System.out.println("Please calories that dish contains:\n");
         String calories = scanner.nextLine();
-//        MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
-//        System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
-//        String typeNum = scanner.nextLine();
-//        String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
-//        MenuType menuType = menuTypeDao.getMenuType(type)
         Dish dish = new Dish(name, calories);
         return dish;
     }
@@ -251,7 +246,7 @@ public class Handlers {
         System.out.println("Please Enter the id of the dish you want to delete:\n");
         DishDaoImpl dishDao = new DishDaoImpl();
         List<Dish> dishList = dishDao.findAll();
-        for (Dish loopDish: dishList) {
+        for (Dish loopDish : dishList) {
             System.out.println(loopDish);
         }
         int dishId = Integer.parseInt(scanner.nextLine());
@@ -280,14 +275,14 @@ public class Handlers {
                 rawInput = scanner.nextLine();
                 userInput = Integer.parseInt(rawInput);
             } catch (NumberFormatException ne) {
-                if (rawInput.equals("X")){
+                if (rawInput.equals("X")) {
                     break;
                 }
                 System.out.println("Invalid Input Try Again");
                 continue;
             }
-            for (Dish dish : dishList ){
-                if (dish.getId() == userInput){
+            for (Dish dish : dishList) {
+                if (dish.getId() == userInput) {
                     dishSet.add(dish);
                 }
             }

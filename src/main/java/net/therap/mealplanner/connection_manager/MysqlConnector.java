@@ -13,7 +13,7 @@ public class MysqlConnector {
 
     //  Database credentials
     static final String DB_USER = "root";
-    static final String DB_PASSWORD= "root";
+    static final String DB_PASSWORD = "root";
 
     public static Connection getMysqlConnection() {
         Connection connection = null;

@@ -35,7 +35,7 @@ public class MealDaoImpl implements MealDao {
                 String day = rs.getString("day");
                 Set<Dish> dishSet = getDishSetByMealId(id);
                 MenuType menuType = menuTypeDao.getMenuType(menu_type_id);
-                Meal meal = new Meal(menuType , name, day);
+                Meal meal = new Meal(menuType, name, day);
                 meal.setId(id);
                 meal.setDishSet(dishSet);
                 mealList.add(meal);
@@ -76,7 +76,7 @@ public class MealDaoImpl implements MealDao {
     @Override
     public boolean insertMeal(Meal meal) {
         List<Meal> mealList = findAll();
-        if (!mealList.contains(meal)){
+        if (!mealList.contains(meal)) {
             Connection dbConnection = null;
             PreparedStatement preparedStatement = null;
 
@@ -94,9 +94,8 @@ public class MealDaoImpl implements MealDao {
 
                 int insertionId = -1;
                 ResultSet rs = preparedStatement.getGeneratedKeys();
-                if(rs.next())
-                {
-                    insertionId= rs.getInt(1);
+                if (rs.next()) {
+                    insertionId = rs.getInt(1);
                 }
                 insertMealDishMap(insertionId, meal.getDishSet());
                 return true;
@@ -114,7 +113,7 @@ public class MealDaoImpl implements MealDao {
                     if (dbConnection != null) {
                         dbConnection.close();
                     }
-                } catch (SQLException sqlException){
+                } catch (SQLException sqlException) {
                     sqlException.printStackTrace();
                 }
             }
@@ -126,7 +125,7 @@ public class MealDaoImpl implements MealDao {
     public boolean updateMeal(Meal meal) {
 
         List<Meal> mealList = findAll();
-        if (!mealList.contains(meal)){
+        if (!mealList.contains(meal)) {
             Connection dbConnection = null;
             PreparedStatement preparedStatement = null;
             updateMealDishMap(meal.getId(), meal.getDishSet());
@@ -157,7 +156,7 @@ public class MealDaoImpl implements MealDao {
                     if (dbConnection != null) {
                         dbConnection.close();
                     }
-                } catch (SQLException sqlException){
+                } catch (SQLException sqlException) {
                     sqlException.printStackTrace();
                 }
             }
@@ -194,7 +193,7 @@ public class MealDaoImpl implements MealDao {
                 if (dbConnection != null) {
                     dbConnection.close();
                 }
-            } catch (SQLException sqlException){
+            } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
             }
         }
@@ -211,7 +210,7 @@ public class MealDaoImpl implements MealDao {
         try {
             dbConnection = MysqlConnector.getMysqlConnection();
             preparedStatement = dbConnection.prepareStatement(insertTableSQL);
-            for (Dish dish: dishSet){
+            for (Dish dish : dishSet) {
                 preparedStatement.setString(1, String.valueOf(mealId));
                 preparedStatement.setString(2, String.valueOf(dish.getId()));
                 preparedStatement.executeUpdate();
@@ -231,19 +230,19 @@ public class MealDaoImpl implements MealDao {
                 if (dbConnection != null) {
                     dbConnection.close();
                 }
-            } catch (SQLException sqlException){
+            } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
             }
         }
         return false;
     }
 
-    public Set<Dish> getDishSetByMealId(int mealId){
+    public Set<Dish> getDishSetByMealId(int mealId) {
         Connection connection = MysqlConnector.getMysqlConnection();
         Statement stmt = null;
         DishDaoImpl dishDao = new DishDaoImpl();
         List<Dish> dishList = dishDao.findAll();
-        Set<Dish> dishSet= new HashSet<Dish>();
+        Set<Dish> dishSet = new HashSet<Dish>();
 
         try {
             stmt = connection.createStatement();
@@ -253,8 +252,8 @@ public class MealDaoImpl implements MealDao {
 
             while (rs.next()) {
                 int dish_id = rs.getInt("dish_id");
-                for (Dish dish: dishList){
-                    if (dish.getId() == dish_id){
+                for (Dish dish : dishList) {
+                    if (dish.getId() == dish_id) {
                         dishSet.add(dish);
                     }
                 }
@@ -298,20 +297,20 @@ public class MealDaoImpl implements MealDao {
             System.out.println("Meal Dish Maps deleted!");
             return true;
         } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            } finally {
-                try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
-                    }
-
-                    if (dbConnection != null) {
-                        dbConnection.close();
-                    }
-                } catch (SQLException sqlException){
-                    sqlException.printStackTrace();
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
                 }
+
+                if (dbConnection != null) {
+                    dbConnection.close();
+                }
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
             }
+        }
 
         return false;
     }
@@ -325,7 +324,7 @@ public class MealDaoImpl implements MealDao {
         try {
             dbConnection = MysqlConnector.getMysqlConnection();
             preparedStatement = dbConnection.prepareStatement(insertTableSQL);
-            for (Dish dish: dishSet){
+            for (Dish dish : dishSet) {
                 preparedStatement.setString(1, String.valueOf(dish.getId()));
                 preparedStatement.setString(2, String.valueOf(mealId));
                 preparedStatement.executeUpdate();
@@ -345,7 +344,7 @@ public class MealDaoImpl implements MealDao {
                 if (dbConnection != null) {
                     dbConnection.close();
                 }
-            } catch (SQLException sqlException){
+            } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
             }
         }
