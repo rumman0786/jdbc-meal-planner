@@ -57,12 +57,29 @@ public class Dish {
     }
 
     @Override
+    public boolean equals(Object object) {
+        boolean isEqual = false;
+
+        if (object != null && object instanceof Dish) {
+            int dishId = ((Dish) object).getId();
+            isEqual = this.id == dishId;
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId() * 17;
+    }
+
+    @Override
     public String toString() {
         return "Dish{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", calories='" + calories + '\'' +
-                ", meals=" + meals +
-                '}';
+                ", calories='" + calories + '\'' + '}';
+//                ", meals=" + meals +
+//                '}';
     }
 }

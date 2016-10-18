@@ -14,12 +14,12 @@ public class Meal {
     private MenuType menuType;
     // Dishes that belong to this meal
     private Set<Dish> dishSet;
-    // Days when this meal is available
-    private Set<Day> daySet;
+    private String day;
 
-    public Meal(MenuType menuType, String name) {
+    public Meal(MenuType menuType, String name, String day) {
         this.menuType = menuType;
         this.name = name;
+        this.day = day;
     }
 
     public int getId() {
@@ -46,6 +46,23 @@ public class Meal {
         this.name = name;
     }
 
+
+    public Set<Dish> getDishSet() {
+        return dishSet;
+    }
+
+    public void setDishSet(Set<Dish> dishSet) {
+        this.dishSet = dishSet;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
     @Override
     public boolean equals(Object object) {
         boolean isEqual = false;
@@ -58,22 +75,6 @@ public class Meal {
         return isEqual;
     }
 
-    public Set<Dish> getDishSet() {
-        return dishSet;
-    }
-
-    public void setDishSet(Set<Dish> dishSet) {
-        this.dishSet = dishSet;
-    }
-
-    public Set<Day> getDaySet() {
-        return daySet;
-    }
-
-    public void setDaySet(Set<Day> daySet) {
-        this.daySet = daySet;
-    }
-
     @Override
     public int hashCode() {
         return this.getName().toLowerCase().hashCode() * 17;
@@ -82,7 +83,9 @@ public class Meal {
     @Override
     public String toString() {
         return "id=" + id +
-                ", mealType='" + menuType + '\'' +
-                ", name='" + name + '\'';
+                ", menuType='" + menuType + '\'' +
+                ", name='" + name + '\'' +
+                ", dishes='" + dishSet + '\'' +
+                ", day='" + day + '\'';
     }
 }

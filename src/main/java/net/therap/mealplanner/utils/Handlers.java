@@ -1,22 +1,32 @@
 package net.therap.mealplanner.utils;
 
-import net.therap.mealplanner.DAO.MealDaoImpl;
+import net.therap.mealplanner.dao.*;
+import net.therap.mealplanner.entity.Dish;
 import net.therap.mealplanner.entity.Meal;
+import net.therap.mealplanner.entity.MenuType;
+import net.therap.mealplanner.services.DishManager;
 import net.therap.mealplanner.services.MealManager;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * @author rumman
  * @since 10/16/16
  */
 public class Handlers {
-    public static final String LUNCH = "lunch";
-    public static final String BREAKFAST = "breakfast";
+    public static final String LUNCH = "LUNCH";
+    public static final String BREAKFAST = "BREAKFAST";
 
     public void startApp() {
-        MealManager manager = new MealManager();
+        // Initialize different Menu Types.
+        MenuTypeDao menuTypeDao = new MenuTypeDaoImpl();
+        menuTypeDao.initMenuType();
+
+        MealManager mealManager = new MealManager();
+        DishManager dishManager = new DishManager();
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -24,7 +34,11 @@ public class Handlers {
             System.out.println("Press 2 to add a Meal");
             System.out.println("Press 3 to update a Meal");
             System.out.println("Press 4 to delete a Meal");
-            System.out.println("Press 5 to exit");
+            System.out.println("Press 5 to show current Dishes");
+            System.out.println("Press 6 to add a Dish");
+            System.out.println("Press 7 to update a Dish");
+            System.out.println("Press 8 to delete a Dish");
+            System.out.println("Press 9 to exit");
             System.out.println("Please choose an option:");
             System.out.println("============================");
             int userInput = 0;
@@ -36,14 +50,15 @@ public class Handlers {
             }
 
             Meal meal = null;
+            Dish dish = null;
             boolean status = false;
             switch (userInput) {
                 case 1:
-                    manager.printMeals();
+                    mealManager.printMeals();
                     break;
                 case 2:
                     meal = getMealFromUser();
-                    status = manager.addMealToMenu(meal);
+                    status = mealManager.addMealToMenu(meal);
                     if (status) {
                         System.out.println("Meal Added");
                     } else {
@@ -52,7 +67,7 @@ public class Handlers {
                     break;
                 case 3:
                     meal = getUpdatedMeal();
-                    status = manager.updateMealInMenu(meal);
+                    status = mealManager.updateMealInMenu(meal);
                     if (status) {
                         System.out.println("Meal Updated");
                     } else {
@@ -61,7 +76,7 @@ public class Handlers {
                     break;
                 case 4:
                     meal = getMealToBeDeleted();
-                    status = manager.deleteMealFromMenu(meal);
+                    status = mealManager.deleteMealFromMenu(meal);
                     if (status) {
                         System.out.println("Meal Deleted");
                     } else {
@@ -69,6 +84,36 @@ public class Handlers {
                     }
                     break;
                 case 5:
+                    dishManager.printDishes();
+                    break;
+                case 6:
+                    dish = getDishFromUser();
+                    status = dishManager.addDish(dish);
+                    if (status) {
+                        System.out.println("Dish Added");
+                    } else {
+                        System.out.println("Dish with that name already exists, Try Again");
+                    }
+                    break;
+                case 7:
+                    dish = getUpdatedDish();
+                    status = dishManager.updateDish(dish);
+                    if (status) {
+                        System.out.println("Dish Updated");
+                    } else {
+                        System.out.println("Dish not Updated, Try Again");
+                    }
+                    break;
+                case 8:
+                    dish = getDishToBeDeleted();
+                    status = dishManager.deleteDish(dish);
+                    if (status) {
+                        System.out.println("Dish Deleted");
+                    } else {
+                        System.out.println("Dish not Deleted, Try Again");
+                    }
+                    break;
+                case 9:
                     System.exit(0);
                 default:
                     System.out.println("Unknown option please try again");
@@ -78,14 +123,28 @@ public class Handlers {
 
     public Meal getMealFromUser() {
         Scanner scanner = new Scanner(System.in);
+        DishManager dishManager = new DishManager();
+        dishManager.printDishes();
+        Set<Dish> dishSet = getDishSet();
         System.out.println("Please Enter a meal name:\n");
         String name = scanner.nextLine();
-        System.out.println("Please calories that meal contains:\n");
-        String calories = scanner.nextLine();
+//        improve later
+        System.out.println("Please Enter a day name:\n");
+        String day = scanner.nextLine();
+//        System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
+//        String typeNum = scanner.nextLine();
+//        String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
+//        Meal meal = new Meal(new MenuType(type), name);
+
+        MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
         System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
         String typeNum = scanner.nextLine();
         String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
-        Meal meal = new Meal(type, name, calories);
+        MenuType menuType = menuTypeDao.getMenuType(type);
+        Meal meal = new Meal(menuType, name, day);
+        System.out.println(menuType.getId());
+        System.out.println(day);
+        meal.setDishSet(dishSet);
         return meal;
     }
 
@@ -119,8 +178,8 @@ public class Handlers {
             String typeNum = scanner.nextLine();
             String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
             mealTobeUpdated.setName(name);
-            mealTobeUpdated.setCalories(calories);
-            mealTobeUpdated.setMealType(type);
+//            mealTobeUpdated.setCalories(calories);
+//            mealTobeUpdated.setMealType(type);
         }
         return mealTobeUpdated;
     }
@@ -141,5 +200,101 @@ public class Handlers {
         }
         System.out.println("No Meal exists with that id.");
         return null;
+    }
+
+    public Dish getDishFromUser() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please Enter a dish name:\n");
+        String name = scanner.nextLine();
+        System.out.println("Please calories that dish contains:\n");
+        String calories = scanner.nextLine();
+//        MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
+//        System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
+//        String typeNum = scanner.nextLine();
+//        String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
+//        MenuType menuType = menuTypeDao.getMenuType(type)
+        Dish dish = new Dish(name, calories);
+        return dish;
+    }
+
+    public Dish getUpdatedDish() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please Enter the id of the dish you want to update:\n");
+        DishDaoImpl dishDao = new DishDaoImpl();
+        List<Dish> dishList = dishDao.findAll();
+        for (Dish loopDish : dishList) {
+            System.out.println(loopDish);
+        }
+        int dishId = Integer.parseInt(scanner.nextLine());
+        Dish dishTobeUpdated = null;
+        boolean isMealAvailable = false;
+        for (Dish loopDish : dishList) {
+            if (loopDish.getId() == dishId) {
+                isMealAvailable = true;
+                dishTobeUpdated = loopDish;
+                break;
+            }
+            System.out.println(loopDish);
+        }
+        if (!isMealAvailable) {
+            System.out.println("No Dish exists with that id.");
+        } else {
+            System.out.println("Please enter updated dish name:\n");
+            String name = scanner.nextLine();
+            System.out.println("Please enter updated calories that dish contains:\n");
+            String calories = scanner.nextLine();
+            dishTobeUpdated.setName(name);
+            dishTobeUpdated.setCalories(calories);
+        }
+        return dishTobeUpdated;
+    }
+
+    public Dish getDishToBeDeleted() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please Enter the id of the dish you want to delete:\n");
+        DishDaoImpl dishDao = new DishDaoImpl();
+        List<Dish> dishList = dishDao.findAll();
+        for (Dish loopDish: dishList) {
+            System.out.println(loopDish);
+        }
+        int dishId = Integer.parseInt(scanner.nextLine());
+        for (Dish loopDish : dishList) {
+            if (loopDish.getId() == dishId) {
+                return loopDish;
+            }
+        }
+        System.out.println("No Dish exists with that id.");
+        return null;
+    }
+
+    public Set<Dish> getDishSet() {
+        DishDaoImpl dishDao = new DishDaoImpl();
+        DishManager dishManager = new DishManager();
+
+        System.out.println("Enter id of the dish you want to add to your meal, Enter X to stop");
+        dishManager.printDishes();
+        Set<Dish> dishSet = new HashSet<Dish>();
+        List<Dish> dishList = dishDao.findAll();
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String rawInput = null;
+            int userInput = 0;
+            try {
+                rawInput = scanner.nextLine();
+                userInput = Integer.parseInt(rawInput);
+            } catch (NumberFormatException ne) {
+                if (rawInput.equals("X")){
+                    break;
+                }
+                System.out.println("Invalid Input Try Again");
+                continue;
+            }
+            for (Dish dish : dishList ){
+                if (dish.getId() == userInput){
+                    dishSet.add(dish);
+                }
+            }
+        }
+        return dishSet;
     }
 }

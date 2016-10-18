@@ -27,4 +27,28 @@ public class MenuType {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean isEqual = false;
+
+        if (object != null && object instanceof MenuType) {
+            int menuTypeId = ((MenuType) object).getId();
+            isEqual = this.id == menuTypeId;
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId() * 17;
+    }
+
+    @Override
+    public String toString() {
+        return "MenuType{" +
+                "category='" + category + '\'' +
+                '}';
+    }
 }

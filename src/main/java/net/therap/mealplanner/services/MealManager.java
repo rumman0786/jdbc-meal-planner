@@ -1,7 +1,7 @@
 package net.therap.mealplanner.services;
 
-import net.therap.mealplanner.DAO.MealDao;
-import net.therap.mealplanner.DAO.MealDaoImpl;
+import net.therap.mealplanner.dao.MealDao;
+import net.therap.mealplanner.dao.MealDaoImpl;
 import net.therap.mealplanner.entity.Meal;
 
 import java.util.List;
@@ -27,6 +27,7 @@ public class MealManager {
         return mealDao.deleteMeal(meal);
     }
 
+    //TODO move to handlers
     public void printMeals() {
         MealDao mealDao = new MealDaoImpl();
         List<Meal> mealList = mealDao.findAll();
@@ -35,6 +36,5 @@ public class MealManager {
             System.out.println(meal);
         }
     }
-
 
 }
