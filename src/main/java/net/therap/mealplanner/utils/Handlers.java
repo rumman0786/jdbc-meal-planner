@@ -137,8 +137,6 @@ public class Handlers {
         String type = (typeNum.equals("1")) ? BREAKFAST : LUNCH;
         MenuType menuType = menuTypeDao.getMenuType(type);
         Meal meal = new Meal(menuType, name, day);
-        System.out.println(menuType.getId());
-        System.out.println(day);
         meal.setDishSet(dishSet);
         return meal;
     }
@@ -160,7 +158,6 @@ public class Handlers {
                 mealTobeUpdated = loopMeal;
                 break;
             }
-            System.out.println(loopMeal);
         }
         if (!isMealAvailable) {
             System.out.println("No Meal exists with that id.");

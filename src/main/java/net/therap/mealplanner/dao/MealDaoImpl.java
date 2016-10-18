@@ -86,8 +86,6 @@ public class MealDaoImpl implements MealDao {
             try {
                 dbConnection = MysqlConnector.getMysqlConnection();
                 preparedStatement = dbConnection.prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
-//                System.out.println(String.valueOf(meal.getMenuType().getId()));
-                System.out.println(meal);
                 preparedStatement.setString(1, meal.getName());
                 preparedStatement.setString(2, meal.getDay());
                 preparedStatement.setString(3, String.valueOf(meal.getMenuType().getId()));
@@ -131,10 +129,7 @@ public class MealDaoImpl implements MealDao {
         if (!mealList.contains(meal)){
             Connection dbConnection = null;
             PreparedStatement preparedStatement = null;
-            System.out.println("Here");
-            System.out.println(meal.getDishSet());
             updateMealDishMap(meal.getId(), meal.getDishSet());
-            System.out.println("Here as well");
             String insertTableSQL = "UPDATE meal SET name = ?,day = ?, menu_type_id = ? WHERE  id =?; ";
 
             try {
@@ -145,7 +140,6 @@ public class MealDaoImpl implements MealDao {
                 preparedStatement.setString(2, meal.getDay());
                 preparedStatement.setString(3, String.valueOf(meal.getMenuType().getId()));
                 preparedStatement.setString(4, String.valueOf(meal.getId()));
-                // execute insert SQL stetement
                 preparedStatement.executeUpdate();
 
                 return true;
@@ -299,7 +293,6 @@ public class MealDaoImpl implements MealDao {
         try {
             preparedStatement = dbConnection.prepareStatement(deleteSQL);
             preparedStatement.setInt(1, mealId);
-            // execute delete SQL stetement
             preparedStatement.executeUpdate();
 
             System.out.println("Meal Dish Maps deleted!");
