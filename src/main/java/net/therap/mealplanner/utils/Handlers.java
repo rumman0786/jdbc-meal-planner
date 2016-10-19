@@ -226,7 +226,6 @@ public class Handlers {
                 dishTobeUpdated = loopDish;
                 break;
             }
-            System.out.println(loopDish);
         }
         if (!isMealAvailable) {
             System.out.println("No Dish exists with that id.");
