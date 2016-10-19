@@ -2,16 +2,34 @@ package net.therap.mealplanner.entity;
 
 import java.sql.SQLException;
 import java.util.Set;
+import javax.persistence.*;
 
 /**
  * @author rumman
  * @since 10/17/16
  */
+@Entity
+@Table(name="dish")
 public class Dish {
+    @Id
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "calories")
     private String calories;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name="meal_dish_map",
+            joinColumns={@JoinColumn(name="meal_id")},
+            inverseJoinColumns={@JoinColumn(name="dish_id")})
     private Set<Meal> meals;
+
+    public Dish() {
+    }
 
     public Dish(String name, String calories) {
         this.name = name;

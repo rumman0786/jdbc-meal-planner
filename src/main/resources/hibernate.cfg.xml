@@ -14,6 +14,8 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
         <!-- Mapping with model class containing annotations -->
+        <mapping class="net.therap.mealplanner.entity.Dish"/>
+        <mapping class="net.therap.mealplanner.entity.Meal"/>
         <mapping class="net.therap.mealplanner.entity.MenuType"/>
     </session-factory>
 </hibernate-configuration>
