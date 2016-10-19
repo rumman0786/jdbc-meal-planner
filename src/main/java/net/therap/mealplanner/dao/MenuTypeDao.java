@@ -11,5 +11,5 @@ public interface MenuTypeDao {
 
     public void initMenuType();
 
-    List<MenuType> findAll();
+    public List<MenuType> findAll();
 }
