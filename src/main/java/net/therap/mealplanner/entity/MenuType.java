@@ -1,12 +1,24 @@
 package net.therap.mealplanner.entity;
 
+import javax.persistence.*;
+
 /**
  * @author rumman
  * @since 10/17/16
  */
+@Entity
+@Table(name = "menu_type", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 public class MenuType {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true, length = 11)
     private int id;
+
+    @Column(name = "category", nullable = false, length = 11)
     private String category; //can be breakfast,lunch, dinner or anything can be added later on
+
+    public MenuType() {
+    }
 
     public MenuType(String category) {
         this.category = category;

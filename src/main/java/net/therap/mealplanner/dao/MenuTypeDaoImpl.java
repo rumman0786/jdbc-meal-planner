@@ -4,6 +4,9 @@ import net.therap.mealplanner.connection_manager.MysqlConnector;
 import net.therap.mealplanner.entity.Dish;
 import net.therap.mealplanner.entity.Meal;
 import net.therap.mealplanner.entity.MenuType;
+import net.therap.mealplanner.utils.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,114 +20,44 @@ public class MenuTypeDaoImpl implements MenuTypeDao {
 
     @Override
     public void initMenuType() {
-        List<Dish> dishList = new ArrayList<Dish>();
-        Connection connection = MysqlConnector.getMysqlConnection();
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            String sql;
-            sql = "SELECT count(id) AS row_count FROM menu_type WHERE category = \"LUNCH\" OR category = \"BREAKFAST\"; ";
-            ResultSet rs = stmt.executeQuery(sql);
-            int count = 0;
-            if (rs.next()) {
-                count = Integer.parseInt(rs.getString("row_count"));
-            }
+        SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        List<MenuType> menuTypeList = session.createCriteria(MenuType.class).list();
+        sessionFactory.close();
 
-            if (menuTypes.length != count && count == 0) {
-                insertMenuType(menuTypes);
-            }
-            rs.close();
-            stmt.close();
-            connection.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            }
-            try {
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
+        if (menuTypeList.size() == 0) {
+            insertMenuType(menuTypes);
         }
     }
 
     public boolean insertMenuType(String[] menuTypes) {
-        Connection dbConnection = null;
-        PreparedStatement preparedStatement = null;
-        String insertTableSQL = "INSERT INTO menu_type (category) VALUES "
-                + "(?)";
-        try {
-            dbConnection = MysqlConnector.getMysqlConnection();
-            for (String type : menuTypes) {
-                preparedStatement = dbConnection.prepareStatement(insertTableSQL);
-                preparedStatement.setString(1, type);
-                // execute insert SQL stetement
-                preparedStatement.executeUpdate();
-            }
-            return true;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
+        SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+        for (String menuTypeString : menuTypes) {
+            //Needs to get current session for every save otherwise doesnt work.
+            Session session = sessionFactory.getCurrentSession();
+            MenuType menuType = new MenuType(menuTypeString);
+            //start transaction
+            session.beginTransaction();
+            //Save the Model object
+            session.save(menuType);
+            //Commit transaction
+            session.getTransaction().commit();
+            System.out.println("MenuType ="+menuType.getCategory());
 
-                if (dbConnection != null) {
-                    dbConnection.close();
-                }
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
+            //terminate session factory, otherwise program won't end
         }
-        return false;
+        sessionFactory.close();
+        return true;
     }
 
     @Override
     public List<MenuType> findAll() {
-        List<MenuType> menuTypeList = new ArrayList<MenuType>();
-        Connection connection = MysqlConnector.getMysqlConnection();
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            String sql;
-            sql = "SELECT id, category FROM menu_type";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String category = rs.getString("category");
-                MenuType menuType = new MenuType(category);
-                menuType.setId(id);
-                menuTypeList.add(menuType);
-            }
-            rs.close();
-            stmt.close();
-            connection.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            }
-            try {
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
-        }
+        SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        List<MenuType> menuTypeList = session.createCriteria(MenuType.class).list();
+        sessionFactory.close();
         return menuTypeList;
     }
 
