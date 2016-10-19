@@ -7,6 +7,7 @@ import net.therap.mealplanner.entity.MenuType;
 import net.therap.mealplanner.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,10 +22,11 @@ public class MenuTypeDaoImpl implements MenuTypeDao {
     @Override
     public void initMenuType() {
         SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
         List<MenuType> menuTypeList = session.createCriteria(MenuType.class).list();
-        sessionFactory.close();
+        tx.commit();
+        session.close();
 
         if (menuTypeList.size() == 0) {
             insertMenuType(menuTypes);
@@ -35,7 +37,7 @@ public class MenuTypeDaoImpl implements MenuTypeDao {
         SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
         for (String menuTypeString : menuTypes) {
             //Needs to get current session for every save otherwise doesnt work.
-            Session session = sessionFactory.getCurrentSession();
+            Session session = sessionFactory.openSession();
             MenuType menuType = new MenuType(menuTypeString);
             //start transaction
             session.beginTransaction();
@@ -44,10 +46,10 @@ public class MenuTypeDaoImpl implements MenuTypeDao {
             //Commit transaction
             session.getTransaction().commit();
             System.out.println("MenuType ="+menuType.getCategory());
+            session.close();
 
             //terminate session factory, otherwise program won't end
         }
-        sessionFactory.close();
         return true;
     }
 
@@ -55,9 +57,10 @@ public class MenuTypeDaoImpl implements MenuTypeDao {
     public List<MenuType> findAll() {
         SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
         Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
+        Transaction tx = session.beginTransaction();
         List<MenuType> menuTypeList = session.createCriteria(MenuType.class).list();
-        sessionFactory.close();
+        tx.commit();
+        session.close();
         return menuTypeList;
     }
 
