@@ -4,6 +4,11 @@ import net.therap.mealplanner.connection_manager.MysqlConnector;
 import net.therap.mealplanner.entity.Dish;
 import net.therap.mealplanner.entity.Meal;
 import net.therap.mealplanner.entity.MenuType;
+import net.therap.mealplanner.utils.HibernateUtil;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,48 +23,12 @@ import java.util.Set;
 public class MealDaoImpl implements MealDao {
     @Override
     public List<Meal> findAll() {
-        List<Meal> mealList = new ArrayList<Meal>();
-        MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
-        Connection connection = MysqlConnector.getMysqlConnection();
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            String sql;
-            sql = "SELECT id, name, day, menu_type_id FROM meal";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                int menu_type_id = rs.getInt("menu_type_id");
-                String day = rs.getString("day");
-                Set<Dish> dishSet = getDishSetByMealId(id);
-                MenuType menuType = menuTypeDao.getMenuType(menu_type_id);
-                Meal meal = new Meal(menuType, name, day);
-                meal.setId(id);
-                meal.setDishSet(dishSet);
-                mealList.add(meal);
-            }
-            rs.close();
-            stmt.close();
-            connection.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            }
-            try {
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
-        }
+        SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        List<Meal> mealList = session.createCriteria(Meal.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        tx.commit();
+        session.close();
         return mealList;
     }
 
@@ -77,125 +46,43 @@ public class MealDaoImpl implements MealDao {
     public boolean insertMeal(Meal meal) {
         List<Meal> mealList = findAll();
         if (!mealList.contains(meal)) {
-            Connection dbConnection = null;
-            PreparedStatement preparedStatement = null;
-
-            String insertTableSQL = "INSERT INTO meal (name, day, menu_type_id )VALUES"
-                    + "(?,?,?)";
-
-            try {
-                dbConnection = MysqlConnector.getMysqlConnection();
-                preparedStatement = dbConnection.prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
-                preparedStatement.setString(1, meal.getName());
-                preparedStatement.setString(2, meal.getDay());
-                preparedStatement.setString(3, String.valueOf(meal.getMenuType().getId()));
-                preparedStatement.executeUpdate();
-                // execute insert SQL stetement
-
-                int insertionId = -1;
-                ResultSet rs = preparedStatement.getGeneratedKeys();
-                if (rs.next()) {
-                    insertionId = rs.getInt(1);
-                }
-                insertMealDishMap(insertionId, meal.getDishSet());
-                return true;
-
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-
-            } finally {
-                try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
-                    }
-
-                    if (dbConnection != null) {
-                        dbConnection.close();
-                    }
-                } catch (SQLException sqlException) {
-                    sqlException.printStackTrace();
-                }
-            }
+            SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+            Session session = sessionFactory.openSession();
+            Transaction tx = session.beginTransaction();
+            session.save(meal);
+            tx.commit();
+            session.close();
+            return true;
         }
         return false;
     }
 
     @Override
     public boolean updateMeal(Meal meal) {
-
         List<Meal> mealList = findAll();
         if (!mealList.contains(meal)) {
-            Connection dbConnection = null;
-            PreparedStatement preparedStatement = null;
-            updateMealDishMap(meal.getId(), meal.getDishSet());
-            String insertTableSQL = "UPDATE meal SET name = ?,day = ?, menu_type_id = ? WHERE  id =?; ";
-
-            try {
-                dbConnection = MysqlConnector.getMysqlConnection();
-                preparedStatement = dbConnection.prepareStatement(insertTableSQL);
-
-                preparedStatement.setString(1, meal.getName());
-                preparedStatement.setString(2, meal.getDay());
-                preparedStatement.setString(3, String.valueOf(meal.getMenuType().getId()));
-                preparedStatement.setString(4, String.valueOf(meal.getId()));
-                preparedStatement.executeUpdate();
-
-                return true;
-
-            } catch (SQLException e) {
-
-                System.out.println(e.getMessage());
-
-            } finally {
-                try {
-                    if (preparedStatement != null) {
-                        preparedStatement.close();
-                    }
-
-                    if (dbConnection != null) {
-                        dbConnection.close();
-                    }
-                } catch (SQLException sqlException) {
-                    sqlException.printStackTrace();
-                }
-            }
+            SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+            Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            session.update(meal);
+            transaction.commit();
+            session.close();
+            return true;
         }
         return false;
     }
 
     @Override
     public boolean deleteMeal(Meal meal) {
-        Statement stmt = null;
-        Connection dbConnection = MysqlConnector.getMysqlConnection();
-        PreparedStatement preparedStatement = null;
-
-        deleteMealDishMap(meal.getId());
-        String deleteSQL = "DELETE FROM meal WHERE id = ?";
-        try {
-            preparedStatement = dbConnection.prepareStatement(deleteSQL);
-            preparedStatement.setInt(1, meal.getId());
-            // execute delete SQL stetement
-            preparedStatement.executeUpdate();
-
-            System.out.println("Record is deleted!");
+        List<Meal> mealList = findAll();
+        if (mealList.contains(meal)) {
+            SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+            Session session = sessionFactory.openSession();
+            Transaction tx = session.beginTransaction();
+            session.delete(meal);
+            tx.commit();
+            session.close();
             return true;
-        } catch (SQLException e) {
-
-            System.out.println(e.getMessage());
-
-        } finally {
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-
-                if (dbConnection != null) {
-                    dbConnection.close();
-                }
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
         }
         return false;
     }
