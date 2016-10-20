@@ -2,6 +2,10 @@ package net.therap.mealplanner.dao;
 
 import net.therap.mealplanner.connection_manager.MysqlConnector;
 import net.therap.mealplanner.entity.Dish;
+import net.therap.mealplanner.entity.MenuType;
+import net.therap.mealplanner.utils.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,43 +19,49 @@ public class DishDaoImpl implements DishDao {
 
     @Override
     public List<Dish> findAll() {
-        List<Dish> dishList = new ArrayList<Dish>();
-        Connection connection = MysqlConnector.getMysqlConnection();
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            String sql;
-            sql = "SELECT id, name, calories FROM dish";
-            ResultSet rs = stmt.executeQuery(sql);
+        SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        List<Dish> dishList = session.createCriteria(Dish.class).list();
+        sessionFactory.close();
 
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String calories = rs.getString("calories");
-                Dish dish = new Dish(name, calories);
-                dish.setId(id);
-                dishList.add(dish);
-            }
-            rs.close();
-            stmt.close();
-            connection.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            }
-            try {
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
-        }
+//        List<Dish> dishList = new ArrayList<Dish>();
+//        Connection connection = MysqlConnector.getMysqlConnection();
+//        Statement stmt = null;
+//        try {
+//            stmt = connection.createStatement();
+//            String sql;
+//            sql = "SELECT id, name, calories FROM dish";
+//            ResultSet rs = stmt.executeQuery(sql);
+//
+//            while (rs.next()) {
+//                int id = rs.getInt("id");
+//                String name = rs.getString("name");
+//                String calories = rs.getString("calories");
+//                Dish dish = new Dish(name, calories);
+//                dish.setId(id);
+//                dishList.add(dish);
+//            }
+//            rs.close();
+//            stmt.close();
+//            connection.close();
+//        } catch (SQLException se) {
+//            se.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (stmt != null)
+//                    stmt.close();
+//            } catch (SQLException se2) {
+//            }
+//            try {
+//                if (connection != null)
+//                    connection.close();
+//            } catch (SQLException se) {
+//                se.printStackTrace();
+//            }
+//        }
         return dishList;
     }
 
