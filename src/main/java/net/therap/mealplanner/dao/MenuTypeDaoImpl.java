@@ -56,7 +56,7 @@ public class MenuTypeDaoImpl implements MenuTypeDao {
     @Override
     public List<MenuType> findAll() {
         SessionFactory sessionFactory = HibernateUtil.getSessionAnnotationFactory();
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
         List<MenuType> menuTypeList = session.createCriteria(MenuType.class).list();
         tx.commit();
