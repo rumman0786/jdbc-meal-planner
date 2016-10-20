@@ -7,10 +7,7 @@ import net.therap.mealplanner.entity.MenuType;
 import net.therap.mealplanner.services.DishManager;
 import net.therap.mealplanner.services.MealManager;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author rumman
@@ -128,8 +125,8 @@ public class Handlers {
         System.out.println("Please Enter a meal name:\n");
         String name = scanner.nextLine();
 //        improve later
-        System.out.println("Please Enter a day name:\n");
-        String day = scanner.nextLine();
+//        System.out.println("Please Enter a day name:\n");
+        String day = getDayFromUser();
 
         MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
         System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
@@ -164,8 +161,8 @@ public class Handlers {
         } else {
             System.out.println("Please enter updated meal name:\n");
             String name = scanner.nextLine();
-            System.out.println("Please Enter updated day name:\n");
-            String day = scanner.nextLine();
+//            System.out.println("Please Enter updated day name:\n");
+            String day = getDayFromUser();
             MenuTypeDaoImpl menuTypeDao = new MenuTypeDaoImpl();
             System.out.println("Press 1 if meal is breakfast 2 if lunch:\n");
             String typeNum = scanner.nextLine();
@@ -305,5 +302,19 @@ public class Handlers {
         for (Meal meal : mealList) {
             System.out.println(meal);
         }
+    }
+
+    public String getDayFromUser() {
+        Scanner scanner = new Scanner(System.in);
+        String [] validDays = {"SATURDAY", "SUNDAY", "MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"};
+        List<String> dayList = Arrays.asList(validDays);
+        System.out.println("Please Enter a day name:\n");
+        String day = scanner.nextLine().toUpperCase();
+
+        if (!dayList.contains(day)){
+            System.out.println("That is not a valid day");
+            return getDayFromUser();
+        }
+        return day;
     }
 }
