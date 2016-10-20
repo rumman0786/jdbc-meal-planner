@@ -7,7 +7,7 @@ import java.util.Set;
  * @author rumman
  * @since 10/16/16
  */
-@Entity
+@Entity()
 @Table(name = "meal")
 public class Meal {
     @Id
@@ -17,18 +17,29 @@ public class Meal {
 
     @Column(name = "name",nullable = false, length = 11)
     private String name;
+
     // Type of menu this meal is i.e. breakfast of lunch
 
-    @ManyToOne
-    @JoinColumn(name = "menu_type_id",nullable = false)
-    private MenuType menuType;
+//    @ManyToOne
+//    @JoinColumn(name = "menu_type_id",nullable = false)
+//    private MenuType menuType;
     // Dishes that belong to this meal
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "meal_dish_map", joinColumns = {
-            @JoinColumn(name = "meal_id", nullable = false, updatable = false) },
-            inverseJoinColumns = { @JoinColumn(name = "dish_id",
-                    nullable = false, updatable = false) })
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinTable(name = "meal_dish_map", joinColumns = {
+//            @JoinColumn(name = "meal_id", nullable = false, updatable = false) },
+//            inverseJoinColumns = { @JoinColumn(name = "dish_id",
+//                    nullable = false, updatable = false) })
+//    private Set<Dish> dishSet;
+
+
+
+    @OneToOne
+    @PrimaryKeyJoinColumn
+    private MenuType menuType;
+
+    // Dishes that belong to this meal
+    @ManyToMany(mappedBy = "meals")
     private Set<Dish> dishSet;
 
     @Column(name = "day",nullable = false, length = 11)
