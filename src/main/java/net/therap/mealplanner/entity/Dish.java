@@ -22,11 +22,11 @@ public class Dish {
     @Column(name = "calories")
     private String calories;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(name="meal_dish_map",
-            joinColumns={@JoinColumn(name="meal_id")},
-            inverseJoinColumns={@JoinColumn(name="dish_id")})
-    private Set<Meal> meals;
+//    @ManyToMany(targetEntity = Meal.class, fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+//    @JoinTable(name="meal_dish_map",
+//            joinColumns={@JoinColumn(name="dish_id")},
+//            inverseJoinColumns={@JoinColumn(name="meal_id")})
+//    private Set<Meal> meals;
 
     public Dish() {
     }
@@ -36,11 +36,11 @@ public class Dish {
         this.calories = calories;
     }
 
-    public Dish(String name, String calories, Set<Meal> meals) {
-        this.name = name;
-        this.calories = calories;
-        this.meals = meals;
-    }
+//    public Dish(String name, String calories, Set<Meal> meals) {
+//        this.name = name;
+//        this.calories = calories;
+//        this.meals = meals;
+//    }
 
     public int getId() {
         return id;
@@ -66,13 +66,13 @@ public class Dish {
         this.calories = calories;
     }
 
-    public Set<Meal> getMeals() {
-        return meals;
-    }
-
-    public void setMeals(Set<Meal> meals) {
-        this.meals = meals;
-    }
+//    public Set<Meal> getMeals() {
+//        return meals;
+//    }
+//
+//    public void setMeals(Set<Meal> meals) {
+//        this.meals = meals;
+//    }
 
     @Override
     public boolean equals(Object object) {

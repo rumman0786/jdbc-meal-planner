@@ -20,26 +20,15 @@ public class Meal {
 
     // Type of menu this meal is i.e. breakfast of lunch
 
-//    @ManyToOne
-//    @JoinColumn(name = "menu_type_id",nullable = false)
-//    private MenuType menuType;
-    // Dishes that belong to this meal
-
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinTable(name = "meal_dish_map", joinColumns = {
-//            @JoinColumn(name = "meal_id", nullable = false, updatable = false) },
-//            inverseJoinColumns = { @JoinColumn(name = "dish_id",
-//                    nullable = false, updatable = false) })
-//    private Set<Dish> dishSet;
-
-
-
-    @OneToOne
-    @PrimaryKeyJoinColumn
+    @ManyToOne
+    @JoinColumn(name = "menu_type_id",nullable = false)
     private MenuType menuType;
 
     // Dishes that belong to this meal
-    @ManyToMany(mappedBy = "meals")
+    @ManyToMany(targetEntity = Dish.class, fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinTable(name="meal_dish_map",
+            joinColumns={@JoinColumn(name="meal_id")},
+            inverseJoinColumns={@JoinColumn(name="dish_id")})
     private Set<Dish> dishSet;
 
     @Column(name = "day",nullable = false, length = 11)
