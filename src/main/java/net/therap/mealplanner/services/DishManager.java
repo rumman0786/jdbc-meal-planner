@@ -30,13 +30,4 @@ public class DishManager {
         return dishDao.deleteDish(dish);
     }
 
-    //TODO move to handlers
-    public void printDishes() {
-        DishDao dishDao = new DishDaoImpl();
-        List<Dish> dishList = dishDao.findAll();
-        System.out.println("Current Dishes are:\n");
-        for (Dish dish : dishList) {
-            System.out.println(dish);
-        }
-    }
 }

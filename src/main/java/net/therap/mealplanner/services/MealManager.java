@@ -27,14 +27,4 @@ public class MealManager {
         return mealDao.deleteMeal(meal);
     }
 
-    //TODO move to handlers
-    public void printMeals() {
-        MealDao mealDao = new MealDaoImpl();
-        List<Meal> mealList = mealDao.findAll();
-        System.out.println("Current Meals are:\n");
-        for (Meal meal : mealList) {
-            System.out.println(meal);
-        }
-    }
-
 }

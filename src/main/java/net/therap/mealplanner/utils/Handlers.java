@@ -54,7 +54,7 @@ public class Handlers {
             boolean status = false;
             switch (userInput) {
                 case 1:
-                    mealManager.printMeals();
+                    printMeals();
                     break;
                 case 2:
                     meal = getMealFromUser();
@@ -84,7 +84,7 @@ public class Handlers {
                     }
                     break;
                 case 5:
-                    dishManager.printDishes();
+                    printDishes();
                     break;
                 case 6:
                     dish = getDishFromUser();
@@ -263,7 +263,7 @@ public class Handlers {
         DishManager dishManager = new DishManager();
 
         System.out.println("Enter id of the dish you want to add to your meal, Enter X to stop");
-        dishManager.printDishes();
+        printDishes();
         Set<Dish> dishSet = new HashSet<Dish>();
         List<Dish> dishList = dishDao.findAll();
         Scanner scanner = new Scanner(System.in);
@@ -287,5 +287,23 @@ public class Handlers {
             }
         }
         return dishSet;
+    }
+
+    public void printDishes() {
+        DishDao dishDao = new DishDaoImpl();
+        List<Dish> dishList = dishDao.findAll();
+        System.out.println("Current Dishes are:\n");
+        for (Dish dish : dishList) {
+            System.out.println(dish);
+        }
+    }
+
+    public void printMeals() {
+        MealDao mealDao = new MealDaoImpl();
+        List<Meal> mealList = mealDao.findAll();
+        System.out.println("Current Meals are:\n");
+        for (Meal meal : mealList) {
+            System.out.println(meal);
+        }
     }
 }
